@@ -29,6 +29,8 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^30.0.0",
     "@types/node": "20.19.9",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.16.0",
     "esbuild": "^0.19.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
@@ -48,17 +50,27 @@
   },
   "workspaces": [
     "packages/*",
-    "core-api"
+    "core-api",
+    "execution-orchestrator"
   ],
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "*",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
     "express": "^4.21.2",
-    "pg": "^8.16.3",
+    "ioredis": "^5.9.2",
+    "kafkajs": "^2.2.4",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.17.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0"
   }

@@ -1,0 +1,106 @@
+{
+  "name": "@org/execution-orchestrator",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "execution-orchestrator/dist",
+          "format": [
+            "cjs"
+          ],
+          "bundle": false,
+          "main": "execution-orchestrator/src/main.ts",
+          "tsConfig": "execution-orchestrator/tsconfig.app.json",
+          "assets": [
+            "execution-orchestrator/src/assets"
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "prune-lockfile": {
+        "dependsOn": [
+          "build"
+        ],
+        "cache": true,
+        "executor": "@nx/js:prune-lockfile",
+        "outputs": [
+          "{workspaceRoot}/execution-orchestrator/dist/package.json",
+          "{workspaceRoot}/execution-orchestrator/dist/package-lock.json"
+        ],
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "copy-workspace-modules": {
+        "dependsOn": [
+          "build"
+        ],
+        "cache": true,
+        "outputs": [
+          "{workspaceRoot}/execution-orchestrator/dist/workspace_modules"
+        ],
+        "executor": "@nx/js:copy-workspace-modules",
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "prune": {
+        "dependsOn": [
+          "prune-lockfile",
+          "copy-workspace-modules"
+        ],
+        "executor": "nx:noop"
+      },
+      "serve": {
+        "continuous": true,
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@org/execution-orchestrator:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@org/execution-orchestrator:build:development"
+          },
+          "production": {
+            "buildTarget": "@org/execution-orchestrator:build:production"
+          }
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "dockerode": "^4.0.9"
+  },
+  "devDependencies": {
+    "@types/dockerode": "^4.0.1"
+  }
+}

@@ -4,10 +4,14 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { LanguagesModule } from './languages/languages.module';
+import { SubmissionsModule } from './submissions/submissions.module';
 import { validateClass } from '../shared/utils/validator.util';
 import { AppEnv } from '../config/env-class/app.env';
 import dbConfig from '../config/db.config';
 import { DbConfig } from '../shared/types/db.type';
+import { KafkaModule } from './kafka/kafka.module';
 
 
 @Module({
@@ -37,7 +41,12 @@ import { DbConfig } from '../shared/types/db.type';
           autoLoadEntities: true,
         };
       },
-    }), UsersModule,
+    }),
+    KafkaModule,
+    UsersModule,
+    AuthModule,
+    LanguagesModule,
+    SubmissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

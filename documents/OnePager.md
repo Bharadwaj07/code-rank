@@ -420,3 +420,47 @@ CREATE TABLE language_configs (
 ## Summary
 
 CodeRank provides a secure, scalable platform for executing user-submitted code across multiple programming languages. By leveraging Docker for isolation, Redis for asynchronous job processing, and PostgreSQL for reliable data storage, the system handles concurrent executions efficiently while maintaining security and performance. The architecture supports horizontal scaling and is designed for easy extension with new programming languages.
+
+
+#### Structure
+
+```
+core-api/
+├── src/
+│   ├── app/
+│   │   ├── users/
+│   │   │   ├── entities/
+│   │   │   │   └── user.entity.ts ✓
+│   │   │   └── ...
+│   │   ├── auth/
+│   │   │   └── auth.controller.ts (new)
+│   │   ├── languages/
+│   │   │   ├── entities/
+│   │   │   │   └── language-config.entity.ts (new)
+│   │   │   ├── languages.service.ts (new)
+│   │   │   └── languages.controller.ts (new)
+│   │   ├── submissions/
+│   │   │   ├── entities/
+│   │   │   │   ├── code-submission.entity.ts (new)
+│   │   │   │   ├── execution-result.entity.ts (new)
+│   │   │   │   └── rate-limit-tracking.entity.ts (new)
+│   │   │   ├── dto/
+│   │   │   │   ├── create-submission.dto.ts (new)
+│   │   │   │   └── submission-result.dto.ts (new)
+│   │   │   ├── submissions.service.ts (new)
+│   │   │   └── submissions.controller.ts (new)
+│   │   └── app.module.ts
+│   └── config/
+
+execution-orchestrator/
+├── src/
+│   ├── workers/
+│   │   ├── code-executor.ts ✓
+│   │   └── queue-consumer.ts ✓
+│   ├── docker/
+│   │   └── docker-manager.ts ✓
+│   ├── services/
+│   │   └── database.service.ts ✓
+│   └── main.ts
+└── package.json
+```
