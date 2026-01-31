@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     // Check if user already exists
@@ -18,7 +18,7 @@ export class AuthService {
       await this.usersService.findByEmail(registerDto.email);
     } catch (error) {
       if (error instanceof ConflictException) {
-       throw new ConflictException(error);
+        throw new ConflictException(error);
       }
       // User doesn't exist, continue
     }
@@ -73,6 +73,7 @@ export class AuthService {
       expiresIn,
       userId: user.id,
       email: user.email,
+      username: user.userName,
     };
   }
 

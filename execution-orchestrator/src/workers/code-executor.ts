@@ -36,7 +36,7 @@ export class CodeExecutorService {
         const compilationResult = await this.dockerManager.runContainer(
           {
             image: job.languageConfig.dockerImage,
-            cmd: ['/bin/bash', '-c', job.languageConfig.compileCommand],
+            cmd: ['/bin/sh', '-c', job.languageConfig.compileCommand],
             binds,
             workingDir: '/app',
             networkDisabled: true,
@@ -70,7 +70,7 @@ export class CodeExecutorService {
       const executionResult = await this.dockerManager.runContainer(
         {
           image: job.languageConfig.dockerImage,
-          cmd: ['/bin/bash', '-c', executeCommand],
+          cmd: ['/bin/sh', '-c', executeCommand],
           binds,
           workingDir: '/app',
           networkDisabled: true,

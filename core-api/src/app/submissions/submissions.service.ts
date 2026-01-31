@@ -20,7 +20,7 @@ export class SubmissionsService {
     private readonly kafkaService: KafkaService,
     private readonly languagesService: LanguagesService,
     private readonly rateLimitService: RateLimitService,
-  ) {}
+  ) { }
 
   async create(
     userId: string,
@@ -29,7 +29,7 @@ export class SubmissionsService {
     // Check rate limiting
     const isAllowed = await this.rateLimitService.checkAndIncrement(
       userId,
-      10, // 10 submissions per hour
+      1000,
       60,
     );
 
@@ -118,6 +118,8 @@ export class SubmissionsService {
       submissionId: submission.id,
       status: submission.status,
       language: submission.language,
+      sourceCode: submission.sourceCode,
+      inputData: submission.inputData,
       stdout: result?.stdout,
       stderr: result?.stderr,
       compilationError: result?.compilationError,
