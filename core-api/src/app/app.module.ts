@@ -25,10 +25,9 @@ import { KafkaModule } from './kafka/kafka.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const db = config.get<DbConfig>('db');
-         if (!db) {
+        if (!db) {
           throw new Error('Database configuration is not defined');
         }
-        console.log('Database Config:', db);
         return {
           type: 'postgres',
           host: db.host,
@@ -37,7 +36,7 @@ import { KafkaModule } from './kafka/kafka.module';
           password: db.password,
           database: db.database,
           ssl: db.ssl,
-          synchronize: false,
+          synchronize: true,
           autoLoadEntities: true,
         };
       },
