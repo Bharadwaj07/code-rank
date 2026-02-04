@@ -108,15 +108,6 @@ export class DockerManager {
                 follow: false,
             }) as Buffer;
 
-            // Dockerode returns logs as a Buffer with header bytes. 
-            // We need to parse them properly or decoding might be messy if mixed.
-            // For simplicity in this step, we'll try simple string decoding, 
-            // but robust implementations parse the Docker multiplexed stream header (8 bytes).
-            // Header: [STREAM_TYPE, 0, 0, 0, SIZE1, SIZE2, SIZE3, SIZE4]
-            // For now, let's use a simpler demux approach or assume simple text if possible.
-            // Better approach using dockerode stream demux:
-            // But container.logs() with follow: false returns a single Buffer.
-            // We will implement a basic demuxer below.
 
             const { stdout, stderr } = this.demuxLogs(logs);
 
