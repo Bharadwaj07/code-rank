@@ -31,6 +31,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, [token]);
 
+    useEffect(() => {
+        const initAuth = async () => {
+            if (token && !user) {
+                try {
+                    const response = await api.get('/auth/me');
+                    setUser(response.data);
+                } catch (error) {
+                    console.error('Failed to restore session:', error);
+                    setToken(null);
+                }
+            }
+        };
+        initAuth();
+    }, [token, user]);
+
     const login = async (email: string, password: string) => {
         try {
             const response = await api.post('/auth/login', { email, password });
