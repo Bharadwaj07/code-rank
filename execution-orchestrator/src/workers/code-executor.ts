@@ -28,17 +28,14 @@ export class CodeExecutorService {
       this.writeSourceFile(tempDir, job.language, job.sourceCode);
       const inputFilePath = job.inputData ? this.writeInputFile(tempDir, job.inputData) : null;
 
-      // Prepare Docker binds (mount tempDir to /app)
-      const binds = [`${tempDir}:/app`];
-
       // Compile if needed
       if (job.languageConfig.compileCommand) {
         const compilationResult = await this.dockerManager.runContainer(
           {
             image: job.languageConfig.dockerImage,
             cmd: ['/bin/sh', '-c', job.languageConfig.compileCommand],
-            binds,
             workingDir: '/app',
+            copySrcDir: tempDir, // Copy files instead of binding
             networkDisabled: true,
           },
           job.languageConfig.timeoutSeconds * 1000,
@@ -71,8 +68,8 @@ export class CodeExecutorService {
         {
           image: job.languageConfig.dockerImage,
           cmd: ['/bin/sh', '-c', executeCommand],
-          binds,
           workingDir: '/app',
+          copySrcDir: tempDir, // Copy files instead of binding
           networkDisabled: true,
         },
         job.languageConfig.timeoutSeconds * 1000,

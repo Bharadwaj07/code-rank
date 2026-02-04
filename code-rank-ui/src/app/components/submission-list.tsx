@@ -19,10 +19,12 @@ export function SubmissionList({ refreshTrigger, onSelect }: SubmissionListProps
         setLoading(true);
         try {
             const response = await api.get<Submission[]>('/submissions');
-            // Sort by newest first
-            const sorted = response.data.sort((a, b) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
+            // Sort by newest first, handling potentially missing dates safely
+            const sorted = response.data.sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return dateB - dateA;
+            });
             setSubmissions(sorted);
         } catch (err) {
             console.error('Failed to fetch submissions', err);
@@ -37,6 +39,17 @@ export function SubmissionList({ refreshTrigger, onSelect }: SubmissionListProps
             case 'FAILED': return 'bg-red-100 text-red-800';
             case 'RUNNING': return 'bg-blue-100 text-blue-800';
             default: return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return 'Unknown date';
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            return date.toLocaleString();
+        } catch (e) {
+            return 'Date error';
         }
     };
 
@@ -86,7 +99,7 @@ export function SubmissionList({ refreshTrigger, onSelect }: SubmissionListProps
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(submission.createdAt).toLocaleString()}
+                                    {formatDate(submission.createdAt)}
                                 </td>
                             </tr>
                         ))}

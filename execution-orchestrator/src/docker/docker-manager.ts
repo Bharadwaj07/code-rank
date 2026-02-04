@@ -1,4 +1,5 @@
 import Docker from 'dockerode';
+import { spawn } from 'child_process';
 import { logger } from '../utils/logger';
 
 export interface DockerContainerConfig {
@@ -9,6 +10,7 @@ export interface DockerContainerConfig {
     networkDisabled?: boolean; // Default true for security
     binds?: string[]; // Volume mounts
     workingDir?: string; // Working directory inside container
+    copySrcDir?: string; // Local directory to copy to workingDir
 }
 
 export interface ContainerExecutionResult {
@@ -94,6 +96,12 @@ export class DockerManager {
             container = await this.docker.createContainer(createOptions);
             const containerId = container.id;
             logger.debug(`Container created: ${containerId.substring(0, 12)}`);
+
+            // Copy files if requested (BEFORE starting)
+            if (config.copySrcDir) {
+                logger.debug(`Copying files from ${config.copySrcDir} to container...`);
+                await this.copyDirectoryToContainer(container, config.copySrcDir, config.workingDir || '/app');
+            }
 
             await container.start();
             logger.debug(`Container started: ${containerId.substring(0, 12)}`);
@@ -202,5 +210,36 @@ export class DockerManager {
         }
 
         return { stdout, stderr };
+    }
+
+    private copyDirectoryToContainer(container: Docker.Container, srcPath: string, destPath: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            // Use local system's tar to stream the directory to the container
+            const args = ['-C', srcPath, '-c', '-f', '-', '.'];
+
+            // Fix for MacOS: Avoid copying extended attributes which cause "operation not supported" errors in Linux containers
+            if (process.platform === 'darwin') {
+                args.unshift('--no-xattrs');
+            }
+
+            const tar = spawn('tar', args, {
+                env: { ...process.env, COPYFILE_DISABLE: '1' } // Prevent ._ files
+            });
+
+            tar.on('error', (err) => {
+                logger.error('Error spawning tar process', err);
+                reject(err);
+            });
+
+            // putArchive expects a tar stream
+            container.putArchive(tar.stdout, { path: destPath }, (err) => {
+                if (err) {
+                    logger.error('Error copying files to container', err);
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 }
