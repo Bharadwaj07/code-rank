@@ -16,9 +16,15 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
 
+import { Request as ExpressRequest } from 'express';
+
+interface RequestWithUser extends ExpressRequest {
+  user: any;
+}
+
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private authService: AuthService) { }
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -30,7 +36,7 @@ export class AuthController {
         'Email, password, and username are required',
       );
     }
-    return await this.authService.register(registerDto);
+    return this.authService.register(registerDto);
   }
 
   @Post('login')
@@ -39,12 +45,12 @@ export class AuthController {
     if (!loginDto.email || !loginDto.password) {
       throw new BadRequestException('Email and password are required');
     }
-    return await this.authService.login(loginDto);
+    return this.authService.login(loginDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Request() req: any) {
+  getProfile(@Request() req: RequestWithUser) {
     return req.user;
   }
 }

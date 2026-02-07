@@ -11,7 +11,7 @@ export interface ConsoleOutput {
     executionTimeMs?: number;
 }
 
-export function useSubmissionPolling() {
+export function useSubmissionPolling(pollingInterval: number = 2000) {
     const [activeSubmissionId, setActiveSubmissionId] = useState<string | null>(null);
     const [status, setStatus] = useState<PollingStatus>('IDLE');
     const [output, setOutput] = useState<ConsoleOutput | null>(null);
@@ -44,6 +44,10 @@ export function useSubmissionPolling() {
         const poll = async () => {
             try {
                 const response = await api.get<SubmissionDetail>(`/submissions/${activeSubmissionId}`);
+                if (!response || !response.data) {
+                    throw new Error('Invalid response from server');
+                }
+
                 const sub = response.data;
                 const currentStatus = sub.status.toUpperCase() as PollingStatus;
 
@@ -60,7 +64,7 @@ export function useSubmissionPolling() {
                     setStatus(currentStatus);
                 }
             } catch (err) {
-                console.error('Polling failed', err);
+                console.error('[useSubmissionPolling] Polling failed', err);
                 setError('Failed to fetch execution result.');
                 setStatus('FAILED');
                 setActiveSubmissionId(null);
@@ -68,12 +72,12 @@ export function useSubmissionPolling() {
         };
 
         poll();
-        pollIntervalRef.current = setInterval(poll, 1000);
+        pollIntervalRef.current = setInterval(poll, pollingInterval);
 
         return () => {
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         };
-    }, [activeSubmissionId]);
+    }, [activeSubmissionId, pollingInterval]);
 
     return {
         status,

@@ -13,7 +13,7 @@ export class UserEntity {
   email!: string;
 
   @Column({ name: 'password_hash', length: 255 })
-  passwordHash!: string;
+  hashedPassword!: string;
 
   @Column({ name: 'is_active', default: true })
   isActive!: boolean;

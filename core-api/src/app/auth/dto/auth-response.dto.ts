@@ -1,7 +1,12 @@
 export class AuthResponseDto {
   accessToken!: string;
-  tokenType: string = 'Bearer';
+  tokenType: string;
   expiresIn!: number;
   userId?: string;
   email?: string;
+  username?: string;
+
+  constructor() {
+    this.tokenType = 'Bearer';
+  }
 }

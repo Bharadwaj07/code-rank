@@ -14,13 +14,9 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     // Check if user already exists
-    try {
-      await this.usersService.findByEmail(registerDto.email);
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        throw new ConflictException(error);
-      }
-      // User doesn't exist, continue
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
     }
 
     // Hash password
@@ -30,7 +26,7 @@ export class AuthService {
     const user = await this.usersService.create({
       userName: registerDto.username,
       email: registerDto.email,
-      passwordHash: hashedPassword,
+      hashedPassword: hashedPassword,
     });
 
     return {
@@ -51,7 +47,7 @@ export class AuthService {
     // Verify password
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
-      user.passwordHash,
+      user.hashedPassword,
     );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');

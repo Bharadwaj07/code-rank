@@ -1,7 +1,7 @@
 export interface CreateSubmissionDto {
     language: string;
     sourceCode: string;
-    inputData?: string;
+    stdin?: string;
 }
 
 export interface Submission {
@@ -45,7 +45,7 @@ export interface CreateLanguageConfigDto {
     dockerImage: string;
     compileCommand?: string;
     executeCommand: string;
-    timeoutSeconds?: number;
-    maxMemoryMb?: number;
+    timeoutSeconds: number;
+    maxMemoryMb: number;
     isActive?: boolean;
 }

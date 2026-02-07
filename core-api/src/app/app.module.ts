@@ -36,7 +36,7 @@ import { KafkaModule } from './kafka/kafka.module';
           password: db.password,
           database: db.database,
           ssl: db.ssl,
-          synchronize: true,
+          synchronize: process.env.NODE_ENV !== 'production',
           autoLoadEntities: true,
         };
       },
