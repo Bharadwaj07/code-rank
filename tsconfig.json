@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false
+  },
+  "references": [
+    {
+      "path": "./core-api"
+    },
+    {
+      "path": "./execution-orchestrator"
+    },
+    {
+      "path": "./code-rank-ui"
+    }
+  ]
+}

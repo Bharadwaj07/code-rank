@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Build outputs
+dist/
+build/
+out/
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# nx / tooling
+tmp/
+.nx/
+.nx/cache/
+
+# Misc
+*.tgz
+.cache/
+
+# Local OS files
+Thumbs.db
+"
+test-output
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
